@@ -1,163 +1,350 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Генератор ссылок ДЗ</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      transition: background 0.5s, color 0.5s;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор ссылок для ДЗ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Анимированный градиент для тёмной темы */
-    body.dark {
-      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a1a);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #eee;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
-    /* Светлая тема */
-    body.light {
-      background: #f5f5f5;
-      color: #111;
-    }
+        .container {
+            background: rgba(30, 30, 46, 0.95);
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 30px;
+        }
 
-    .container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 500px;
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-    }
+        .app-title {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
 
-    body.light .container {
-      background: #fff;
-      border: 1px solid #ddd;
-    }
+        .form-group {
+            margin-bottom: 25px;
+        }
 
-    h2 {
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #c0c0e0;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-    input {
-      width: calc(50% - 10px);
-      padding: 10px;
-      margin: 5px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-    }
+        /* Убираем стрелки у number input */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
 
-    body.dark input {
-      background: #2c2c2c;
-      color: #eee;
-    }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
-    body.light input {
-      background: #f0f0f0;
-      color: #111;
-      border: 1px solid #ccc;
-    }
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(20, 20, 35, 0.9);
+            border: 2px solid rgba(100, 100, 150, 0.2);
+            border-radius: 10px;
+            font-size: 15px;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 400;
+        }
 
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+        input[type="number"]:focus,
+        input[type="date"]:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 
+                0 0 0 3px rgba(99, 102, 241, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
 
-    .generate-btn {
-      background: #444;
-      color: #fff;
-    }
+        input[type="number"]::placeholder {
+            color: #6b7280;
+            font-weight: 300;
+        }
 
-    .generate-btn:hover {
-      background: #666;
-    }
+        .submit-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-    .theme-toggle {
-      background: #888;
-      color: #fff;
-    }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 20px rgba(99, 102, 241, 0.4);
+        }
 
-    .theme-toggle:hover {
-      background: #aaa;
-    }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
 
-    .result {
-      margin-top: 20px;
-      font-size: 14px;
-      word-break: break-all;
-    }
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(20, 20, 35, 0.9);
+            border-radius: 12px;
+            border-left: 4px solid #6366f1;
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
 
-    .result a {
-      color: #4da6ff;
-      text-decoration: none;
-    }
-  </style>
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .generated-link {
+            word-break: break-all;
+            padding: 15px;
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #d1d5db;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 130px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .open-btn {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .open-btn:hover {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
+            transform: translateY(-2px);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.2));
+            transform: translateY(-2px);
+        }
+
+        /* Стили для кнопки поддержки */
+        .support-container {
+            text-align: center;
+        }
+
+        .support-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            letter-spacing: 0.8px;
+            font-family: 'JetBrains Mono', monospace;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .support-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(135deg, #9b69f7 0%, #8b4cf0 100%);
+        }
+
+        .support-btn:active {
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
-<body class="dark">
-  <div class="container">
-    <h2>Генератор ссылки для ДЗ</h2>
-    <div>
-      <input type="text" id="hwId" placeholder="ID ДЗ">
-      <input type="date" id="hwDate">
+<body>
+    <div class="container">
+        <div class="app-title">Генератор ссылок для ДЗ</div>
+        
+        <form id="linkForm">
+            <div class="form-group">
+                <label for="hwId">ID домашнего задания</label>
+                <input type="number" id="hwId" required min="1" placeholder="Введите ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="dueDate">Дата сдачи</label>
+                <input type="date" id="dueDate" required>
+            </div>
+            
+            <button type="submit" class="submit-btn">Сгенерировать</button>
+        </form>
+        
+        <div id="result">
+            <div class="result-title">Сгенерированная ссылка</div>
+            <div class="generated-link" id="generatedLink"></div>
+            <div class="action-buttons">
+                <button class="action-btn open-btn" onclick="openLink()">Открыть</button>
+                <button class="action-btn copy-btn" onclick="copyToClipboard()">Копировать</button>
+            </div>
+        </div>
     </div>
-    <div>
-      <button class="generate-btn" onclick="generateLink()">Сгенерировать</button>
-      <button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
+
+    <div class="support-container">
+        <a href="https://yookassa.ru/my/i/aKWhyhGZ5hUZ/l" target="_blank" class="support-btn">
+            Поддержать автора
+        </a>
     </div>
-    <div class="result" id="result"></div>
-  </div>
 
-  <script>
-    function generateLink() {
-      const id = document.getElementById("hwId").value.trim();
-      const date = document.getElementById("hwDate").value;
-      if (!id || !date) {
-        document.getElementById("result").innerText = "Введите ID и дату.";
-        return;
-      }
-      const url = `https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php?&id=${id}&dated=${date}`;
-      document.getElementById("result").innerHTML =
-        `<a href="${url}" target="_blank">${url}</a>`;
-    }
+    <script>
+        let currentGeneratedLink = '';
 
-    function toggleTheme() {
-      const body = document.body;
-      if (body.classList.contains("dark")) {
-        body.classList.replace("dark", "light");
-        localStorage.setItem("theme", "light");
-      } else {
-        body.classList.replace("light", "dark");
-        localStorage.setItem("theme", "dark");
-      }
-    }
+        document.getElementById('linkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const hwId = document.getElementById('hwId').value;
+            const dueDate = document.getElementById('dueDate').value;
+            
+            if (!hwId || !dueDate) {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            const baseUrl = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php";
+            currentGeneratedLink = `${baseUrl}?&id=${hwId}&dated=${dueDate}`;
+            
+            document.getElementById('generatedLink').textContent = currentGeneratedLink;
+            document.getElementById('result').style.display = 'block';
+        });
 
-    // При загрузке страницы восстанавливаем тему
-    window.onload = () => {
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      document.body.className = savedTheme;
-    };
-  </script>
+        function openLink() {
+            if (!currentGeneratedLink) {
+                alert('Сначала сгенерируйте ссылку!');
+                return;
+            }
+            window.open(currentGeneratedLink, '_blank');
+        }
+
+        function copyToClipboard() {
+            if (!currentGeneratedLink) {
+                alert('Сначала сгенерируйте ссылку!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(currentGeneratedLink).then(() => {
+                alert('Ссылка скопирована в буфер обмена!');
+            }).catch(err => {
+                const textArea = document.createElement('textarea');
+                textArea.value = currentGeneratedLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Ссылка скопирована в буфер обмена!');
+            });
+        }
+
+        // Устанавливаем сегодняшнюю дату как значение по умолчанию
+        document.getElementById('dueDate').valueAsDate = new Date();
+    </script>
 </body>
 </html>
