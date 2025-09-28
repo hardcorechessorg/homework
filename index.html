@@ -4,24 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор ссылок</title>
-    <!-- Локальные шрифты для анонимности -->
-    <style>
-        /* JetBrains Mono локально */
-        @font-face {
-            font-family: 'JetBrains Mono';
-            font-style: normal;
-            font-weight: 400;
-            src: local('Courier New'), local('Monaco'), local('Menlo'), local('Ubuntu Mono'), monospace;
-        }
-        
-        /* Inter локально */
-        @font-face {
-            font-family: 'Inter';
-            font-style: normal;
-            font-weight: 400;
-            src: local('Arial'), local('Helvetica'), local('Segoe UI'), sans-serif;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -339,9 +322,6 @@
             // Безопасное отображение
             document.getElementById('generatedLink').textContent = currentGeneratedLink;
             document.getElementById('result').style.display = 'block';
-            
-            // Очистка формы (опционально)
-            // document.getElementById('linkForm').reset();
         });
 
         function openLink() {
@@ -382,10 +362,6 @@
 
         // Устанавливаем сегодняшнюю дату
         document.getElementById('dueDate').valueAsDate = new Date();
-        
-        // Защита от инспектирования (опционально)
-        Object.freeze(Object.prototype);
-        Object.freeze(Array.prototype);
     </script>
 </body>
 </html>
