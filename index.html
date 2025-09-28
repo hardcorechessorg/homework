@@ -1,138 +1,163 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Генератор ссылки</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор ссылок ДЗ</title>
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: #1a1a1a;
       margin: 0;
-      padding: 0;
+      font-family: "Inter", sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      color: #f5f5f5;
+      height: 100vh;
+      transition: background 0.5s, color 0.5s;
     }
+
+    /* Анимированный градиент для тёмной темы */
+    body.dark {
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a1a);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #eee;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Светлая тема */
+    body.light {
+      background: #f5f5f5;
+      color: #111;
+    }
+
     .container {
-      background: #2a2a2a;
-      padding: 32px;
-      border: 1px solid #3a3a3a;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 600px;
-    }
-    h2 {
-      text-align: center;
-      font-size: 22px;
-      margin-bottom: 24px;
-      color: #fff;
-    }
-    label {
-      font-size: 14px;
-      font-weight: 600;
-      display: block;
-      margin-top: 16px;
-      margin-bottom: 6px;
-      color: #ddd;
-    }
-    input {
-      font-size: 15px;
-      padding: 10px;
-      border: 1px solid #555;
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
       width: 100%;
       box-sizing: border-box;
-      background: #1a1a1a;
-      color: #f5f5f5;
+      text-align: center;
     }
-    input:focus {
-      border-color: #888;
-      outline: none;
+
+    body.light .container {
+      background: #fff;
+      border: 1px solid #ddd;
     }
-    button {
-      margin-top: 20px;
-      padding: 12px 16px;
-      font-size: 15px;
+
+    h2 {
+      margin-bottom: 20px;
       font-weight: 600;
+    }
+
+    input {
+      width: calc(50% - 10px);
+      padding: 10px;
+      margin: 5px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    body.dark input {
+      background: #2c2c2c;
+      color: #eee;
+    }
+
+    body.light input {
+      background: #f0f0f0;
+      color: #111;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .generate-btn {
       background: #444;
       color: #fff;
     }
-    button:hover {
+
+    .generate-btn:hover {
       background: #666;
     }
-    button:disabled {
-      background: #333;
-      cursor: not-allowed;
+
+    .theme-toggle {
+      background: #888;
+      color: #fff;
     }
+
+    .theme-toggle:hover {
+      background: #aaa;
+    }
+
     .result {
       margin-top: 20px;
       font-size: 14px;
       word-break: break-all;
-      padding: 10px;
-      border: 1px solid #444;
-      border-radius: 4px;
-      background: #1a1a1a;
-      color: #eee;
+    }
+
+    .result a {
+      color: #4da6ff;
+      text-decoration: none;
     }
   </style>
 </head>
-<body>
+<body class="dark">
   <div class="container">
-    <h2>Генератор ссылки</h2>
-
-    <label>ID</label>
-    <input id="id" placeholder="например: 438" />
-
-    <label>Дата (YYYY-MM-DD)</label>
-    <input id="dated" placeholder="например: 2025-09-13" />
-
-    <button id="build">Сгенерировать</button>
-    <button id="open" disabled>Открыть в новой вкладке</button>
-
-    <div class="result" id="result">—</div>
+    <h2>Генератор ссылки для ДЗ</h2>
+    <div>
+      <input type="text" id="hwId" placeholder="ID ДЗ">
+      <input type="date" id="hwDate">
+    </div>
+    <div>
+      <button class="generate-btn" onclick="generateLink()">Сгенерировать</button>
+      <button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
+    </div>
+    <div class="result" id="result"></div>
   </div>
 
-<script>
-  const byId = id => document.getElementById(id);
-  function isDateYMD(s){
-    return /^\d{4}-\d{2}-\d{2}$/.test(s);
-  }
-
-  document.getElementById('build').addEventListener('click', ()=>{
-    const base = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php?&id=";
-    const id = byId('id').value.trim();
-    const dated = byId('dated').value.trim();
-
-    if(!id){
-      alert('Укажи ID');
-      return;
-    }
-    if(dated && !isDateYMD(dated)){
-      alert('Дата должна быть в формате YYYY-MM-DD');
-      return;
+  <script>
+    function generateLink() {
+      const id = document.getElementById("hwId").value.trim();
+      const date = document.getElementById("hwDate").value;
+      if (!id || !date) {
+        document.getElementById("result").innerText = "Введите ID и дату.";
+        return;
+      }
+      const url = `https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php?&id=${id}&dated=${date}`;
+      document.getElementById("result").innerHTML =
+        `<a href="${url}" target="_blank">${url}</a>`;
     }
 
-    let url = base + encodeURIComponent(id);
-    if(dated){
-      url += '&dated=' + encodeURIComponent(dated);
+    function toggleTheme() {
+      const body = document.body;
+      if (body.classList.contains("dark")) {
+        body.classList.replace("dark", "light");
+        localStorage.setItem("theme", "light");
+      } else {
+        body.classList.replace("light", "dark");
+        localStorage.setItem("theme", "dark");
+      }
     }
 
-    byId('result').textContent = url;
-    byId('open').disabled = false;
-  });
-
-  document.getElementById('open').addEventListener('click', ()=>{
-    const txt = byId('result').textContent;
-    if(!txt || txt === '—') return;
-    window.open(txt, '_blank', 'noopener');
-  });
-</script>
+    // При загрузке страницы восстанавливаем тему
+    window.onload = () => {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.className = savedTheme;
+    };
+  </script>
 </body>
 </html>
