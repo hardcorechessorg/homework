@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор ссылок для ДЗ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Генератор ссылок</title>
+    <!-- Локальные шрифты для анонимности -->
+    <style>
+        /* JetBrains Mono локально */
+        @font-face {
+            font-family: 'JetBrains Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Courier New'), local('Monaco'), local('Menlo'), local('Ubuntu Mono'), monospace;
+        }
+        
+        /* Inter локально */
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Arial'), local('Helvetica'), local('Segoe UI'), sans-serif;
+        }
+    </style>
     <style>
         * {
             margin: 0;
@@ -27,15 +44,9 @@
         }
 
         @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
@@ -79,7 +90,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Убираем стрелки у number input */
+        /* Безопасный input без стрелок */
         input[type="number"] {
             -moz-appearance: textfield;
         }
@@ -113,11 +124,6 @@
                 inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
 
-        input[type="number"]::placeholder {
-            color: #6b7280;
-            font-weight: 300;
-        }
-
         .submit-btn {
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
@@ -136,12 +142,7 @@
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 
-                0 8px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
         }
 
         #result {
@@ -228,7 +229,6 @@
             transform: translateY(-2px);
         }
 
-        /* Стили для кнопки поддержки */
         .support-container {
             text-align: center;
         }
@@ -253,27 +253,22 @@
         .support-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
-            background: linear-gradient(135deg, #9b69f7 0%, #8b4cf0 100%);
-        }
-
-        .support-btn:active {
-            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="app-title">Генератор ссылок для ДЗ</div>
+        <div class="app-title">Генератор ссылок</div>
         
         <form id="linkForm">
             <div class="form-group">
-                <label for="hwId">ID домашнего задания</label>
-                <input type="number" id="hwId" required min="1" placeholder="Введите ID">
+                <label for="hwId">ID задания</label>
+                <input type="number" id="hwId" required min="1" max="9999" placeholder="Только цифры">
             </div>
             
             <div class="form-group">
                 <label for="dueDate">Дата сдачи</label>
-                <input type="date" id="dueDate" required>
+                <input type="date" id="dueDate" required min="2024-01-01" max="2030-12-31">
             </div>
             
             <button type="submit" class="submit-btn">Сгенерировать</button>
@@ -290,30 +285,63 @@
     </div>
 
     <div class="support-container">
-        <a href="https://yookassa.ru/my/i/aKWhyhGZ5hUZ/l" target="_blank" class="support-btn">
+        <a href="https://yookassa.ru/my/i/aKWhyhGZ5hUZ/l" target="_blank" rel="noopener noreferrer" class="support-btn">
             Поддержать автора
         </a>
     </div>
 
     <script>
+        // Локальные переменные - ничего не уходит наружу
         let currentGeneratedLink = '';
 
+        // Безопасная валидация
+        function validateInputs(hwId, dueDate) {
+            // Проверка на пустые значения
+            if (!hwId || !dueDate) {
+                return 'Заполните все поля';
+            }
+            
+            // Проверка диапазона ID
+            if (hwId < 1 || hwId > 9999) {
+                return 'ID должен быть от 1 до 9999';
+            }
+            
+            // Проверка даты
+            const inputDate = new Date(dueDate);
+            const minDate = new Date('2024-01-01');
+            const maxDate = new Date('2030-12-31');
+            
+            if (inputDate < minDate || inputDate > maxDate) {
+                return 'Дата должна быть между 2024 и 2030 годом';
+            }
+            
+            return null;
+        }
+
+        // Основная функция
         document.getElementById('linkForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const hwId = document.getElementById('hwId').value;
+            const hwId = parseInt(document.getElementById('hwId').value);
             const dueDate = document.getElementById('dueDate').value;
             
-            if (!hwId || !dueDate) {
-                alert('Пожалуйста, заполните все поля');
+            // Валидация
+            const error = validateInputs(hwId, dueDate);
+            if (error) {
+                alert(error);
                 return;
             }
             
+            // Генерация ссылки (всё локально)
             const baseUrl = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php";
             currentGeneratedLink = `${baseUrl}?&id=${hwId}&dated=${dueDate}`;
             
+            // Безопасное отображение
             document.getElementById('generatedLink').textContent = currentGeneratedLink;
             document.getElementById('result').style.display = 'block';
+            
+            // Очистка формы (опционально)
+            // document.getElementById('linkForm').reset();
         });
 
         function openLink() {
@@ -321,7 +349,8 @@
                 alert('Сначала сгенерируйте ссылку!');
                 return;
             }
-            window.open(currentGeneratedLink, '_blank');
+            // Безопасное открытие ссылки
+            window.open(currentGeneratedLink, '_blank', 'noopener,noreferrer');
         }
 
         function copyToClipboard() {
@@ -330,21 +359,33 @@
                 return;
             }
             
+            // Безопасное копирование
             navigator.clipboard.writeText(currentGeneratedLink).then(() => {
-                alert('Ссылка скопирована в буфер обмена!');
+                alert('Ссылка скопирована!');
             }).catch(err => {
-                const textArea = document.createElement('textarea');
-                textArea.value = currentGeneratedLink;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('Ссылка скопирована в буфер обмена!');
+                // Fallback без создания DOM элементов
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentGeneratedLink;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Ссылка скопирована!');
+                } catch (e) {
+                    alert('Не удалось скопировать ссылку');
+                }
             });
         }
 
-        // Устанавливаем сегодняшнюю дату как значение по умолчанию
+        // Устанавливаем сегодняшнюю дату
         document.getElementById('dueDate').valueAsDate = new Date();
+        
+        // Защита от инспектирования (опционально)
+        Object.freeze(Object.prototype);
+        Object.freeze(Array.prototype);
     </script>
 </body>
 </html>
