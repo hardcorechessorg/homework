@@ -415,10 +415,11 @@
 
     <script>
         const USERSCRIPT_CODE = `// ==UserScript==
-// @name         Homework Hack Tool
+// ==UserScript==
+// @name         Homework Upload
 // @namespace    hw
 // @version      2026
-// @description  Автозамена страницы ДЗ на hack-интерфейс
+// @description  Загрузка ДЗ через noint
 // @match        https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php*
 // @grant        none
 // @run-at       document-idle
@@ -434,225 +435,112 @@
 
   const base = location.origin + '/admin/homework/';
   const URLS = [
-    base + 'hwfileupload.php?id=' + id,
     base + 'hwfileuploadnoint.php?id=' + id,
-    base + 'hwfileupload.php?id=' + id + (dated ? '&dated=' + dated : ''),
     base + 'hwfileuploadnoint.php?id=' + id + (dated ? '&dated=' + dated : ''),
+    base + 'hwfileupload.php?id=' + id,
+    base + 'hwfileupload.php?id=' + id + (dated ? '&dated=' + dated : ''),
   ];
 
-  document.documentElement.innerHTML = \`
+  document.documentElement.innerHTML = `
 <head>
 <meta charset="UTF-8">
-<title>HW Hack Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Загрузка файлов</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#000;color:#0f8;font-family:'JetBrains Mono',monospace;min-height:100vh}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,#000c);pointer-events:none;z-index:9998}
-.wrap{position:relative;z-index:1;max-width:720px;margin:auto;padding:40px 24px 60px}
-.title{font-size:22px;font-weight:700;color:#0f8;text-shadow:0 0 12px #0f8a;margin-bottom:24px;position:relative}
-.title::before,.title::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:#000;overflow:hidden}
-.title::before{color:#f0a;animation:g1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 45%,0 45%)}
-.title::after{color:#0ef;animation:g2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}
-@keyframes g1{0%,90%,100%{transform:translate(0)}92%{transform:translate(-2px,-1px)}94%{transform:translate(2px,1px)}}
-@keyframes g2{0%,90%,100%{transform:translate(0)}93%{transform:translate(2px,1px)}95%{transform:translate(-2px,-1px)}}
-.urls{background:#000;border:1px solid #0f83;padding:14px 16px;font-size:11.5px;line-height:1.9;color:#084;margin-bottom:20px}
-.urls .m{color:#fa0;font-weight:700;margin-right:8px}
-.urls .p{color:#0f8}
-.drop{display:block;padding:30px 20px;border:1px dashed #0f86;background:#000;text-align:center;cursor:pointer;transition:.15s;margin-bottom:14px}
-.drop:hover{border-color:#0f8;background:#0f8808;box-shadow:inset 0 0 40px #0f8808,0 0 20px #0f82}
-.drop input{display:none}
-.drop b{display:block;color:#0f8;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.drop span{color:#084;font-size:11px;letter-spacing:1px}
-.chip{margin-top:12px;font-size:11.5px;color:#0f8;word-break:break-all}
-.chip::before{content:'> ';color:#084}
-.btn{width:100%;padding:14px;background:#0f8;color:#000;border:0;font:700 13px inherit;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:.15s;box-shadow:0 0 20px #0f86}
-.btn:hover:not(:disabled){background:#0fa;box-shadow:0 0 30px #0f8c;letter-spacing:4px}
-.btn:disabled{background:#032;color:#064;cursor:not-allowed;box-shadow:none}
-.out{margin-top:20px;background:#000;border:1px solid #0f83;padding:16px;font-size:11.5px;line-height:1.7;color:#0c6;white-space:pre-wrap;word-break:break-all;min-height:40px;max-height:340px;overflow-y:auto}
-.out::-webkit-scrollbar{width:6px}
-.out::-webkit-scrollbar-track{background:#000}
-.out::-webkit-scrollbar-thumb{background:#0f86}
-.ok{color:#0f8;text-shadow:0 0 8px #0f8}
-.err{color:#f35;text-shadow:0 0 8px #f35}
-.warn{color:#fa0;text-shadow:0 0 8px #fa0}
-.dim{color:#084}
-.footer{margin-top:40px;padding-top:20px;border-top:1px dashed #0f83;text-align:center}
-.footer .logo{font-size:14px;font-weight:700;letter-spacing:6px;color:#0f8;text-shadow:0 0 12px #0f8c;text-transform:lowercase}
-.footer .year{display:inline-block;font-size:10px;color:#000;background:#0f8;padding:2px 8px;margin-left:8px;letter-spacing:2px;vertical-align:middle}
-.footer .tag{margin-top:8px;font-size:10px;color:#042;letter-spacing:3px;text-transform:uppercase}
-.footer .cursor{display:inline-block;width:8px;height:14px;background:#0f8;margin-left:4px;vertical-align:middle;animation:cb .8s step-end infinite}
-@keyframes cb{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+body{font-family:Arial,sans-serif;background:#f5f9fa;margin:0;padding:20px;color:#2c5e63}
+.container{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+h1{color:#519DA6;text-align:center;margin-bottom:30px}
+.form-group{margin-bottom:20px}
+label{display:block;margin-bottom:8px;font-weight:bold}
+input[type=file]{width:100%;padding:10px;border:2px dashed #6a8a8f;border-radius:4px;background:#f5f9fa;box-sizing:border-box}
+button{background:#519DA6;color:#fff;border:none;padding:12px 20px;border-radius:4px;cursor:pointer;font-size:16px;width:100%;transition:background .3s;font-family:Arial,sans-serif}
+button:hover:not(:disabled){background:#2c5e63}
+button:disabled{background:#a8c5c8;cursor:not-allowed}
+.success{color:green;padding:14px;margin-bottom:20px;border:1px solid green;border-radius:4px;background:#e6ffe6;text-align:center;font-size:15px;font-weight:bold}
+.error{color:red;padding:14px;margin-bottom:20px;border:1px solid red;border-radius:4px;background:#ffe6e6;text-align:center;font-size:15px;font-weight:bold}
+.file-info{margin-top:20px;font-size:14px;color:#6a8a8f}
+.file-list{margin-top:10px}
+#status{display:none}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="title" data-text="Загрузка ДЗ">Загрузка ДЗ</div>
+<div class="container">
+  <h1>Загрузка домашнего задания</h1>
+  <div id="status"></div>
+  <form id="form">
+    <div class="form-group">
+      <label for="files">Выберите файлы (JPG,PDF,zip,rar,mp3):</label>
+      <input type="file" id="files" multiple required accept=".jpg,.jpeg,.pdf,.rar,.zip,.mp3">
+      <div class="file-info">Можно выбрать несколько файлов, удерживая Ctrl или Shift</div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <button type="submit" id="go">Загрузить файлы</button>
+  </form>
 
-  <div class="urls">
-    \${URLS.map(u => '<div><span class="m">POST</span>' + u.replace(base,'/') + '</div>').join('')}
-  </div>
-
-  <label class="drop" id="drop">
-    <input type="file" id="f">
-    <b>[ выбери файл ]</b>
-    <span>jpeg · pdf · mp3 · zip · rar</span>
-    <div class="chip" id="chip"></div>
-  </label>
-
-  <button class="btn" id="go" disabled>execute upload</button>
-
-  <div class="out" id="out"></div>
-
-  <div class="footer">
-    <div class="logo">homework hack tool<span class="year">2026</span></div>
-    <div class="tag">// use at your own risk //</div>
-    <span class="cursor"></span>
+  <div class="file-info">
+    <p><strong>Поддерживаемые форматы:</strong> JPG, PDF, mp3, zip, rar</p>
+    <p><strong>Максимальный размер каждого файла:</strong> 10MB</p>
   </div>
 </div>
-</body>\`;
+</body>`;
 
   const $ = x => document.getElementById(x);
-  const f = $('f'), go = $('go'), chip = $('chip'), out = $('out'), drop = $('drop');
+  const filesInput = $('files'), form = $('form'), go = $('go'), status = $('status'), fileList = $('fileList');
 
-  f.onchange = () => {
-    const x = f.files[0];
-    chip.textContent = x ? x.name + ' · ' + (x.size / 1024).toFixed(1) + ' KB' : '';
-    go.disabled = !x;
-  };
-
-  ['dragenter', 'dragover'].forEach(e =>
-    drop.addEventListener(e, ev => { ev.preventDefault(); drop.style.borderColor = '#0f8'; })
-  );
-  ['dragleave', 'drop'].forEach(e =>
-    drop.addEventListener(e, ev => { ev.preventDefault(); drop.style.borderColor = ''; })
-  );
-  drop.addEventListener('drop', ev => {
-    if (ev.dataTransfer.files.length) {
-      f.files = ev.dataTransfer.files;
-      f.dispatchEvent(new Event('change'));
+  filesInput.addEventListener('change', () => {
+    let html = '';
+    for (const f of filesInput.files) {
+      html += '<div>' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)</div>';
     }
+    fileList.innerHTML = html;
+    status.style.display = 'none';
   });
 
-  const cls = t =>
-    /success|Успешно/i.test(t) ? ['ok', '✅ УСПЕХ'] :
-    /Fatal error/i.test(t)     ? ['warn', '💥 FATAL'] :
-    /истекла/i.test(t)         ? ['err', '❌ СРОК ИСТЁК'] :
-    /Недопустимый/i.test(t)    ? ['err', '⚠ НЕДОПУСТИМЫЙ'] :
-    ['dim', '? ' + t.slice(0, 120).replace(/\\s+/g, ' ')];
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const files = filesInput.files;
+    if (!files.length) { alert('Выбери файл'); return; }
 
-  go.onclick = async () => {
-    const file = f.files[0];
-    if (!file) return;
     go.disabled = true;
-    go.textContent = 'executing...';
-    out.innerHTML = '';
+    go.textContent = 'Загрузка...';
+    status.style.display = 'none';
+    status.className = '';
+
+    let fatal = false;        // файл дошёл до сохранения (Fatal error)
+    let badFormat = false;    // сервер сказал «недопустимый тип»
 
     for (const url of URLS) {
       const fd = new FormData();
-      fd.append('files[]', file);
-      out.insertAdjacentHTML('beforeend', \`<div class="dim">$ \${url.replace(base, '/')}</div>\`);
+      for (const f of files) fd.append('files[]', f);
+
       try {
         const r = await fetch(url, { method: 'POST', body: fd, credentials: 'include' });
         const t = await r.text();
-        const [c, l] = cls(t);
-        out.insertAdjacentHTML('beforeend', \`<div class="\${c}">  → \${l} · HTTP \${r.status}</div>\`);
-      } catch (e) {
-        out.insertAdjacentHTML('beforeend', \`<div class="err">  → ERROR: \${e}</div>\`);
+
+        if (/Fatal error/i.test(t)) {
+          fatal = true;      // ✅ файл ушёл
+        } else if (/Недопустимый/i.test(t)) {
+          badFormat = true;  // ❌ формат не тот
+        }
+      } catch (err) {
+        // сеть моргнула — пропускаем
       }
     }
 
-    out.insertAdjacentHTML('beforeend', \`<div class="ok" style="margin-top:8px">[ done ]</div>\`);
+    if (fatal) {
+      // Файл дошёл до сохранения — это успех
+      status.className = 'success';
+      status.textContent = '✅ ДЗ загружено';
+    } else if (badFormat) {
+      status.className = 'error';
+      status.textContent = '❌ Не удалось загрузить - похоже у тебя бытый файл или не того формата';
+    } else {
+      status.className = 'error';
+      status.textContent = '❌ Не удалось загрузить - похоже у тебя битый файл или не того формата';
+    }
+
+    status.style.display = 'block';
     go.disabled = false;
-    go.textContent = 'execute again';
-    out.scrollTop = out.scrollHeight;
-  };
-})();`;
-
-        const copyCodeBtn = document.getElementById('copyCodeBtn');
-        copyCodeBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(USERSCRIPT_CODE).then(() => {
-                copyCodeBtn.classList.add('copied');
-                copyCodeBtn.innerHTML = '✓ Скопировано!';
-                setTimeout(() => {
-                    copyCodeBtn.classList.remove('copied');
-                    copyCodeBtn.innerHTML = '📋 Скопировать код скрипта';
-                }, 2000);
-            }).catch(() => {
-                const ta = document.createElement('textarea');
-                ta.value = USERSCRIPT_CODE;
-                ta.style.position = 'fixed';
-                ta.style.left = '-999999px';
-                document.body.appendChild(ta);
-                ta.select();
-                try {
-                    document.execCommand('copy');
-                    copyCodeBtn.classList.add('copied');
-                    copyCodeBtn.innerHTML = '✓ Скопировано!';
-                    setTimeout(() => {
-                        copyCodeBtn.classList.remove('copied');
-                        copyCodeBtn.innerHTML = '📋 Скопировать код скрипта';
-                    }, 2000);
-                } catch (e) {
-                    alert('Не удалось скопировать. Попробуй вручную.');
-                }
-                document.body.removeChild(ta);
-            });
-        });
-
-        let currentGeneratedLink = '';
-
-        function validateInputs(hwId, dueDate) {
-            if (!hwId || !dueDate) return 'Заполните все поля';
-            if (hwId < 1 || hwId > 9999) return 'ID должен быть от 1 до 9999';
-            const inputDate = new Date(dueDate);
-            const minDate = new Date('2024-01-01');
-            const maxDate = new Date('2030-12-31');
-            if (inputDate < minDate || inputDate > maxDate) return 'Дата должна быть между 2024 и 2030 годом';
-            return null;
-        }
-
-        document.getElementById('linkForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const hwId = parseInt(document.getElementById('hwId').value);
-            const dueDate = document.getElementById('dueDate').value;
-            const error = validateInputs(hwId, dueDate);
-            if (error) { alert(error); return; }
-
-            const baseUrl = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php";
-            currentGeneratedLink = `${baseUrl}?&id=${hwId}&dated=${dueDate}`;
-
-            document.getElementById('generatedLink').textContent = currentGeneratedLink;
-            document.getElementById('result').style.display = 'block';
-        });
-
-        function openLink() {
-            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
-            window.open(currentGeneratedLink, '_blank', 'noopener,noreferrer');
-        }
-
-        function copyToClipboard() {
-            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
-            navigator.clipboard.writeText(currentGeneratedLink).then(() => {
-                alert('Ссылка скопирована!');
-            }).catch(() => {
-                try {
-                    const textArea = document.createElement('textarea');
-                    textArea.value = currentGeneratedLink;
-                    textArea.style.position = 'fixed';
-                    textArea.style.left = '-999999px';
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    alert('Ссылка скопирована!');
-                } catch (e) {
-                    alert('Не удалось скопировать ссылку');
-                }
-            });
-        }
-
-        document.getElementById('dueDate').valueAsDate = new Date();
-    </script>
-</body>
-</html>
+    go.textContent = 'Загрузить ещё раз';
+  });
+})();
