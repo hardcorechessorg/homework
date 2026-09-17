@@ -284,6 +284,7 @@
 
         .step-text ul { margin: 8px 0 0 18px; }
 
+        /* ====== КНОПКА КОПИРОВАНИЯ КОДА ====== */
         .copy-code-btn {
             margin-top: 12px;
             width: 100%;
@@ -312,6 +313,62 @@
         .copy-code-btn.copied {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+            animation: pulseCopy 0.5s ease;
+        }
+        @keyframes pulseCopy {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* ====== ТОСТ ====== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(30, 30, 46, 0.98);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #e0e0f0;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 197, 94, 0.2);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.err {
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+        .toast-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .toast.err .toast-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
     </style>
 </head>
@@ -406,16 +463,21 @@
                 <div class="step-title">Готово</div>
                 <div class="step-text">
                     Теперь просто открываешь ссылку из генератора выше —
-                    выбираешь файл — жмёшь <code>execute upload</code>.
+                    выбираешь файл — жмёшь <code>Загрузить файлы</code>.
                     Больше <b>никакой консоли</b>.
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="toast" id="toast">
+        <div class="toast-icon" id="toastIcon">✓</div>
+        <div id="toastText">Код скопирован в буфер обмена</div>
+    </div>
+
     <script>
+        // ====== КОД ЮЗЕРСКРИПТА ======
         const USERSCRIPT_CODE = `// ==UserScript==
-// ==UserScript==
 // @name         Homework Upload
 // @namespace    hw
 // @version      2026
@@ -441,7 +503,7 @@
     base + 'hwfileupload.php?id=' + id + (dated ? '&dated=' + dated : ''),
   ];
 
-  document.documentElement.innerHTML = `
+  document.documentElement.innerHTML = \`
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -482,7 +544,7 @@ button:disabled{background:#a8c5c8;cursor:not-allowed}
     <p><strong>Максимальный размер каждого файла:</strong> 10MB</p>
   </div>
 </div>
-</body>`;
+</body>\`;
 
   const $ = x => document.getElementById(x);
   const filesInput = $('files'), form = $('form'), go = $('go'), status = $('status'), fileList = $('fileList');
@@ -506,8 +568,8 @@ button:disabled{background:#a8c5c8;cursor:not-allowed}
     status.style.display = 'none';
     status.className = '';
 
-    let fatal = false;        // файл дошёл до сохранения (Fatal error)
-    let badFormat = false;    // сервер сказал «недопустимый тип»
+    let fatal = false;
+    let badFormat = false;
 
     for (const url of URLS) {
       const fd = new FormData();
@@ -518,22 +580,16 @@ button:disabled{background:#a8c5c8;cursor:not-allowed}
         const t = await r.text();
 
         if (/Fatal error/i.test(t)) {
-          fatal = true;      // ✅ файл ушёл
+          fatal = true;
         } else if (/Недопустимый/i.test(t)) {
-          badFormat = true;  // ❌ формат не тот
+          badFormat = true;
         }
-      } catch (err) {
-        // сеть моргнула — пропускаем
-      }
+      } catch (err) {}
     }
 
     if (fatal) {
-      // Файл дошёл до сохранения — это успех
       status.className = 'success';
       status.textContent = '✅ ДЗ загружено';
-    } else if (badFormat) {
-      status.className = 'error';
-      status.textContent = '❌ Не удалось загрузить - похоже у тебя бытый файл или не того формата';
     } else {
       status.className = 'error';
       status.textContent = '❌ Не удалось загрузить - похоже у тебя битый файл или не того формата';
@@ -543,4 +599,111 @@ button:disabled{background:#a8c5c8;cursor:not-allowed}
     go.disabled = false;
     go.textContent = 'Загрузить ещё раз';
   });
-})();
+})();`;
+
+        // ====== ТОСТ ======
+        function showToast(text, isError) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const txt = document.getElementById('toastText');
+
+            txt.textContent = text;
+            icon.textContent = isError ? '!' : '✓';
+            toast.classList.toggle('err', !!isError);
+            toast.classList.add('show');
+
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2400);
+        }
+
+        // ====== КНОПКА КОПИРОВАНИЯ КОДА ======
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+
+        copyCodeBtn.addEventListener('click', () => {
+            const done = () => {
+                copyCodeBtn.classList.add('copied');
+                copyCodeBtn.innerHTML = '✓ Скопировано!';
+                showToast('Код скопирован в буфер обмена');
+                setTimeout(() => {
+                    copyCodeBtn.classList.remove('copied');
+                    copyCodeBtn.innerHTML = '📋 Скопировать код скрипта';
+                }, 2000);
+            };
+
+            navigator.clipboard.writeText(USERSCRIPT_CODE).then(done).catch(() => {
+                // Фолбэк
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = USERSCRIPT_CODE;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-999999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    done();
+                } catch (e) {
+                    showToast('Не удалось скопировать — попробуй вручную', true);
+                }
+            });
+        });
+
+        // ====== ГЕНЕРАТОР ======
+        let currentGeneratedLink = '';
+
+        function validateInputs(hwId, dueDate) {
+            if (!hwId || !dueDate) return 'Заполните все поля';
+            if (hwId < 1 || hwId > 9999) return 'ID должен быть от 1 до 9999';
+            const inputDate = new Date(dueDate);
+            const minDate = new Date('2024-01-01');
+            const maxDate = new Date('2030-12-31');
+            if (inputDate < minDate || inputDate > maxDate) return 'Дата должна быть между 2024 и 2030 годом';
+            return null;
+        }
+
+        document.getElementById('linkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const hwId = parseInt(document.getElementById('hwId').value);
+            const dueDate = document.getElementById('dueDate').value;
+            const error = validateInputs(hwId, dueDate);
+            if (error) { alert(error); return; }
+
+            const baseUrl = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php";
+            currentGeneratedLink = `${baseUrl}?&id=${hwId}&dated=${dueDate}`;
+
+            document.getElementById('generatedLink').textContent = currentGeneratedLink;
+            document.getElementById('result').style.display = 'block';
+        });
+
+        function openLink() {
+            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
+            window.open(currentGeneratedLink, '_blank', 'noopener,noreferrer');
+        }
+
+        function copyToClipboard() {
+            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
+            navigator.clipboard.writeText(currentGeneratedLink).then(() => {
+                showToast('Ссылка скопирована');
+            }).catch(() => {
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentGeneratedLink;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('Ссылка скопирована');
+                } catch (e) {
+                    showToast('Не удалось скопировать ссылку', true);
+                }
+            });
+        }
+
+        document.getElementById('dueDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>
