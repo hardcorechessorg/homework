@@ -478,6 +478,128 @@
     <script>
         // ====== КОД ЮЗЕРСКРИПТА ======
         const USERSCRIPT_CODE = `// ==UserScript==
+// @name         Homework Upload
+// @namespace    hw
+// @version      2026
+// @description  Загрузка ДЗ через noint
+// @match        https://stupenionlaincentr.ru/admin/homework/hwfileuploadnoint.php*
+// @grant        none
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  const p = new URLSearchParams(location.search);
+  const id = p.get('id');
+  const dated = p.get('dated') || '';
+  if (!id) return;
+
+  const base = location.origin + '/admin/homework/';
+  const URLS = [
+    base + 'hwfileuploadnoint.php?id=' + id,
+    base + 'hwfileuploadnoint.php?id=' + id + (dated ? '&dated=' + dated : ''),
+    base + 'hwfileupload.php?id=' + id,
+    base + 'hwfileupload.php?id=' + id + (dated ? '&dated=' + dated : ''),
+  ];
+
+  document.documentElement.innerHTML = \`
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Загрузка файлов</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f9fa;margin:0;padding:20px;color:#2c5e63}
+.container{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+h1{color:#519DA6;text-align:center;margin-bottom:30px}
+.form-group{margin-bottom:20px}
+label{display:block;margin-bottom:8px;font-weight:bold}
+input[type=file]{width:100%;padding:10px;border:2px dashed #6a8a8f;border-radius:4px;background:#f5f9fa;box-sizing:border-box}
+button{background:#519DA6;color:#fff;border:none;padding:12px 20px;border-radius:4px;cursor:pointer;font-size:16px;width:100%;transition:background .3s;font-family:Arial,sans-serif}
+button:hover:not(:disabled){background:#2c5e63}
+button:disabled{background:#a8c5c8;cursor:not-allowed}
+.success{color:green;padding:14px;margin-bottom:20px;border:1px solid green;border-radius:4px;background:#e6ffe6;text-align:center;font-size:15px;font-weight:bold}
+.error{color:red;padding:14px;margin-bottom:20px;border:1px solid red;border-radius:4px;background:#ffe6e6;text-align:center;font-size:15px;font-weight:bold}
+.file-info{margin-top:20px;font-size:14px;color:#6a8a8f}
+.file-list{margin-top:10px}
+#status{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Загрузка домашнего задания</h1>
+  <div id="status"></div>
+  <form id="form">
+    <div class="form-group">
+      <label for="files">Выберите файлы (JPG,PDF,zip,rar,mp3):</label>
+      <input type="file" id="files" multiple required accept=".jpg,.jpeg,.pdf,.rar,.zip,.mp3">
+      <div class="file-info">Можно выбрать несколько файлов, удерживая Ctrl или Shift</div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <button type="submit" id="go">Загрузить файлы</button>
+  </form>
+
+  <div class="file-info">
+    <p><strong>Поддерживаемые форматы:</strong> JPG, PDF, mp3, zip, rar</p>
+    <p><strong>Максимальный размер каждого файла:</strong> 10MB</p>
+  </div>
+</div>
+</body>\`;
+
+  const $ = x => document.getElementById(x);
+  const filesInput = $('files'), form = $('form'), go = $('go'), status = $('status'), fileList = $('fileList');
+
+  filesInput.addEventListener('change', () => {
+    let html = '';
+    for (const f of filesInput.files) {
+      html += '<div>' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)</div>';
+    }
+    fileList.innerHTML = html;
+    status.style.display = 'none';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const files = filesInput.files;
+    if (!files.length) { alert('Выбери файл'); return; }
+
+    go.disabled = true;
+    go.textContent = 'Загрузка...';
+    status.style.display = 'none';
+    status.className = '';
+
+    let fatal = false;
+    let badFormat = false;
+
+    for (const url of URLS) {
+      const fd = new FormData();
+      for (const f of files) fd.append('files[]', f);
+
+      try {
+        const r = await fetch(url, { method: 'POST', body: fd, credentials: 'include' });
+        const t = await r.text();
+
+        if (/Fatal error/i.test(t)) {
+          fatal = true;
+        } else if (/Недопустимый/i.test(t)) {
+          badFormat = true;
+        }
+      } catch (err) {}
+    }
+
+    if (fatal) {
+      status.className = 'success';
+      status.textContent = '✅ ДЗ загружено';
+    } else {
+      status.className = 'error';
+      status.textContent = '❌ Не удалось загрузить - похоже у тебя битый файл или не того формата';
+    }
+
+    status.style.display = 'block';
+    go.disabled = false;
+    go.textContent = 'Загрузить ещё раз';
+  });
+})();`;
 
         // ====== ТОСТ ======
         function showToast(text, isError) {
